@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import "./styles.css";
+import { InputTodos } from "./components/InputTodos";
+import { IncompleteTodos } from "./components/IncompleteTodos";
+import { CompleteTodos, completeTodos } from "./components/CompleteTodos";
 
 export const App = () => {
   const [todoText, setTodoText] = useState("");
@@ -30,7 +33,7 @@ export const App = () => {
     setCompleteTodos(newComplteTodos);
   };
 
-  const OnClickBack = (index) => {
+  const onClickBack = (index) => {
     const newCompleteTodos = [...completeTodos];
     newCompleteTodos.splice(index, 1);
 
@@ -41,41 +44,23 @@ export const App = () => {
 
   return (
     <>
-      <div className="input-area">
-        <input
-          placeholder="TODOを入力"
-          value={todoText}
-          onChange={onChangeTodoText}
-        />
-        <button onClick={onClickAdd}>追加</button>
-      </div>
-      <div className="incomplete-area">
-        <p className="title">未完了のTODO</p>
-        <ul>
-          {incompleteTodos.map((todo, index) => {
-            return (
-              <div key={todo} class="list-row">
-                <li>{todo}</li>
-                <button onClick={() => onClickComplete(index)}>完了</button>
-                <button onClick={() => onClickDelete(index)}>削除</button>
-              </div>
-            );
-          })}
-        </ul>
-      </div>
-      <div className="complete-area">
-        <p className="title">完了のTODO</p>
-        <ul>
-          {completeTodos.map((todo, index) => {
-            return (
-              <div key={todo} class="list-row">
-                <li>{todo}</li>
-                <button onClick={() => OnClickBack(index)}>戻す</button>
-              </div>
-            );
-          })}
-        </ul>
-      </div>
+      <InputTodos
+        todoText={todoText}
+        onChange={onChangeTodoText}
+        onClick={onClickAdd}
+        disabled={incompleteTodos.length >= 5}
+      />
+      {incompleteTodos.length >= 5 && (
+        <p style={{ color: "red" }}>
+          登録できるtodoは5個までです。消化してください。
+        </p>
+      )}
+      <IncompleteTodos
+        todos={incompleteTodos}
+        onClickComplete={onClickComplete}
+        onClickDelete={onClickDelete}
+      />
+      <CompleteTodos todos={completeTodos} onClickBack={onClickBack} />
     </>
   );
 };
